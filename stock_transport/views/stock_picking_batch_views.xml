@@ -1,7 +1,7 @@
 <odoo>
     <!-- inherited action -->
     <record id="stock_picking_batch.stock_picking_batch_action" model="ir.actions.act_window">
-        <field name="view_mode">tree,kanban,form,graph</field>
+        <field name="view_mode">tree,kanban,form,graph,gantt</field>
     </record>
 
     <!-- graph view -->
@@ -11,10 +11,32 @@
         <field name="arch" type="xml">
             <graph string="Picking batch volume and weight">
                 <field name="scheduled_date"/>
-                <field name="weight"/>
                 <field name="volume"/>
+                <field name="weight"/>
+                <field name="transfer"/>
+                <field name="lines"/>
                 <field name="vehicle_category_id" type="row"/>
             </graph>
+        </field>
+    </record>
+
+    <!-- gantt view -->
+    <record id="stock_picking_batch_view_gantt" model="ir.ui.view">
+        <field name="name">stock.picking.batch.gantt</field>
+        <field name="model">stock.picking.batch</field>
+        <field name="arch" type="xml">
+            <gantt date_start="scheduled_date"
+                   date_stop="scheduled_date"
+                   default_scale="week"
+                   scales="day,week,month,year"
+                   string="Batch Gantt Chart"
+                   pill_label = "True"
+                   color="id"
+                   decoration-info ="state =='draft'"
+                   default_group_by="dock,vehicle_id">
+                <field name="state"/>
+                <field name="vehicle_id"/>
+            </gantt>
         </field>
     </record>
 
@@ -25,6 +47,7 @@
         <field name="inherit_id" ref="stock_picking_batch.stock_picking_batch_form"></field>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='scheduled_date']" position="after">
+                <field name = "dock" string="Dock"/>
                 <field name = "vehicle_id" string="Vehicle"/>
                 <field name = "vehicle_category_id" string="Vehicle Category"/>
                 <field name = "weight" string="Weight" widget = "progressbar"/>

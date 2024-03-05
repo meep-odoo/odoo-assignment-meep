@@ -5,7 +5,7 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
 
-    shipped_volume = fields.Float()
+    shipped_volume = fields.Float(compute ="compute_volume")
 
 
     @api.depends("move_line_ids")
@@ -15,3 +15,5 @@ class StockPicking(models.Model):
            temp = record.move_line_ids
            for product in temp:
                v = v + product.product_id.volume * product.quantity
+
+       self.shipped_volume = v
